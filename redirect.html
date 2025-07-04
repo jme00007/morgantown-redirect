@@ -1,22 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0; URL='https://wvu.qualtrics.com/jfe/form/SV_77Ac6LrgbLOuFEy'" />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 60px;
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Morgantown Safety Survey</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      text-align: center;
+      padding: 40px;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: 80%;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #002855;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005293;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+    img {
+      max-height: 80px;
+      margin-bottom: 20px;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/West_Virginia_Mountaineers_logo.svg/2560px-West_Virginia_Mountaineers_logo.svg.png" alt="WVU Logo">
+    <h2>Morgantown Safety Survey</h2>
+    <p>Thank you for your interest in taking the Morgantown Safety Survey. Please enter your assigned passcode to begin.</p>
+    
+    <input type="text" id="passcode" placeholder="Enter your passcode">
+    <br>
+    <button onclick="submitCode()">Submit</button>
+    
+    <div class="message" id="message"></div>
+  </div>
+
+  <footer>
+    For questions, contact Dr. Megan Gandy at <a href="mailto:megan.gandy@mail.wvu.edu">megan.gandy@mail.wvu.edu</a>
+  </footer>
+
+  <script>
+    async function submitCode() {
+      const code = document.getElementById("passcode").value.trim();
+      const msgDiv = document.getElementById("message");
+      msgDiv.innerHTML = "Checking code...";
+      
+      try {
+        const response = await fetch(
+          "https://script.google.com/macros/s/AKfycbz0tizQLHdV55xnJRB6sE2dA-oowymDTKja7YYtGqkj0ryJM8HvydXvSQ_aSzzHzsnv/exec?passcode=" + encodeURIComponent(code)
+        );
+        const text = await response.text();
+
+        if (text.includes("Passcode accepted")) {
+          msgDiv.innerHTML = "Passcode accepted! Redirecting you now...";
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(text, "text/html");
+          const link = htmlDoc.querySelector("a");
+          if (link) {
+            window.open(link.href, "_blank");
+          }
+        } else {
+          msgDiv.innerHTML = text;
+        }
+      } catch (err) {
+        msgDiv.innerHTML = "There was an error checking your code. Please try again later.";
+        console.error(err);
       }
-      a {
-        color: #00467f;
-      }
-    </style>
-  </head>
-  <body>
-    <h2>Redirecting to the Morgantown Safety Survey...</h2>
-    <p>If you are not automatically redirected, <a href="https://wvu.qualtrics.com/jfe/form/SV_77Ac6LrgbLOuFEy">click here to continue</a>.</p>
-  </body>
+    }
+  </script>
+</body>
 </html>
